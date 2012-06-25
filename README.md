@@ -10,10 +10,10 @@ will let through a single request to probe to see if the peer feels
 better.  If it does, it will close the circuit and allow requests once
 again.  If not, it will open the circuit again.
 
-A L{CircuitBreakerSet} can handle the state for multiple peers at the
-same time.  Use the C{context} method to pick which peer to track.
-The first argument is used to identify the peer.  Make it a string of
-some kind, since it will be used to identify the peer in logs.
+A `CircuitBreakerSet` can handle the state for multiple peers at the
+same time.  Use the `context` method to pick which peer to track.  The
+first argument is used to identify the peer.  Make it a string of some
+kind, since it will be used to identify the peer in logs.
 
 Below is a small example of how the circuit breaker can be used:
 
