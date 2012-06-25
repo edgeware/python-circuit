@@ -22,7 +22,7 @@ Below is a small example of how the circuit breaker can be used:
 
     circuit_breaker = CircuitBreakerSet(time.time, logging.getLogger(
         'circuit-breaker'))
-    circuit_breaker.handle_error(ValueError);
+    circuit_breaker.handle_error(ValueError)
 
     def fn(circuit_breaker):
         try:
