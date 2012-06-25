@@ -1,5 +1,5 @@
 A circuit breaker according to the logic outline in Michael T. Nygard's 
-great book (http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213)[Release It!].
+great book [Release It!](http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213).
 
 Read: http://en.wikipedia.org/wiki/Circuit_breaker_design_pattern
 
