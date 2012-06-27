@@ -1,4 +1,6 @@
 *~
 *.pyc
 \.gitignore
-
+dist
+env
+MANIFEST
