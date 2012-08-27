@@ -25,9 +25,7 @@ class TwistedCircuitBreaker(CircuitBreaker):
     """
 
     def __exit__(self, exc_type, exc_val, tb):
-        print "EXIT"
         if exc_type is defer._DefGen_Return:
-            print "GOT IT"
             exc_type, exc_val, tb = None, None, None
         return CircuitBreaker.__exit__(self, exc_type, exc_val, tb)
 
