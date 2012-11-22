@@ -1,3 +1,3 @@
-recursive-include *.py
+recursive-include circuit *.py
 include versioneer.py
 include README.md
