@@ -1,19 +1,11 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-
-import versioneer
-versioneer.versionfile_source = "circuit/_version.py"
-versioneer.versionfile_build = "circuit/_version.py"
-versioneer.tag_prefix = ""
-versioneer.parentdir_prefix = ""
-commands = versioneer.get_cmdclass().copy()
-
 with open('README.md') as f:
     long_description = f.read().strip()
 
 setup(name='python-circuit',
-      version=versioneer.get_version(),
+      version='0.1.5',
       description='Simple implementation of the Circuit Breaker pattern',
       long_description=long_description,
       author='Edgeware',
