@@ -16,5 +16,4 @@ setup(name='python-circuit',
       tests_require=[
           'mockito==0.5.2',
           'Twisted>=10.2'
-      ],
-      cmdclass=commands)
+      ])
