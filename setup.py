@@ -5,7 +5,7 @@ with open('README.md') as f:
     long_description = f.read().strip()
 
 setup(name='python-circuit',
-      version='0.1.6',
+      version='0.1.7',
       description='Simple implementation of the Circuit Breaker pattern',
       long_description=long_description,
       author='Edgeware',
