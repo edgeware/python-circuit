@@ -11,6 +11,7 @@ setup(name='python-circuit',
       author='Edgeware',
       author_email='info@edgeware.tv',
       url='https://github.com/edgeware/python-circuit',
+      license='Apache v2.0 License',
       packages=['circuit'],
       test_suite='circuit.test',
       tests_require=[
