@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/edgeware/python-circuit.svg?branch=master)](https://travis-ci.org/edgeware/python-circuit)
+
 A circuit breaker according to the logic outline in Michael T. Nygard's 
 great book [Release It!](http://www.amazon.com/Release-It-Production-Ready-Pragmatic-Programmers/dp/0978739213).
 
