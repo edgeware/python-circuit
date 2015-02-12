@@ -80,7 +80,7 @@ which uses exceptions internally.)
 
 # License #
 
-Copyright 2015 Edgeware AB.
+Copyright 2012 Edgeware AB.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
