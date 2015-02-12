@@ -26,8 +26,7 @@ class TwistedCircuitBreakerTestCase(unittest.TestCase):
         self.clock = task.Clock()
         self.log = mock()
         when(self.log).getChild('ctxt').thenReturn(self.log)
-        self.circuit_breaker = TwistedCircuitBreakerSet(self.clock,
-           self.log)
+        self.circuit_breaker = TwistedCircuitBreakerSet(self.clock, self.log)
 
     def test_context_exit_with_inline_callbacks_resets_circuit(self):
         @defer.inlineCallbacks

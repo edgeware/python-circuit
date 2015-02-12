@@ -35,5 +35,4 @@ class TwistedCircuitBreakerSet(CircuitBreakerSet):
 
     def __init__(self, reactor, logger, **kwargs):
         kwargs.update({'factory': TwistedCircuitBreaker})
-        CircuitBreakerSet.__init__(self, reactor.seconds, logger,
-            **kwargs)
+        CircuitBreakerSet.__init__(self, reactor.seconds, logger, **kwargs)

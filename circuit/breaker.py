@@ -75,7 +75,7 @@ class CircuitBreaker(object):
                 if time == 0:
                     time = 0.0001
                 self.log.debug('error rate: %f errors per second' % (
-                        float(self.maxfail) / time))
+                    float(self.maxfail) / time))
                 self.open(err)
 
     def test(self):
@@ -152,7 +152,10 @@ class CircuitBreakerSet(object):
     def context(self, id):
         """Return a circuit breaker for the given ID."""
         if id not in self.circuits:
-            self.circuits[id] = self.factory(self.clock, self.log.getChild(id),
-                self.error_types, self.maxfail, self.reset_timeout,
-                self.time_unit)
+            self.circuits[id] = self.factory(self.clock,
+                                             self.log.getChild(id),
+                                             self.error_types,
+                                             self.maxfail,
+                                             self.reset_timeout,
+                                             self.time_unit)
         return self.circuits[id]
