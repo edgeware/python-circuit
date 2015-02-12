@@ -95,5 +95,5 @@ class CircuitBreakerTestCase(unittest.TestCase):
         def test():
             with self.breaker:
                 raise IOError("error")
-        self.assertRaises(IOError, test)
-        self.assertEquals(len(self.breaker.errors), 1)
+            self.assertRaises(IOError, test)
+            self.assertEquals(len(self.breaker.errors), 1)

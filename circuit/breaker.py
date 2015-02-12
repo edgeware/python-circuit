@@ -106,6 +106,7 @@ class CircuitBreaker(object):
             self.success()
         elif exc_type in self.error_types:
             self.error(exc_val)
+            return True
         return False
 
 
