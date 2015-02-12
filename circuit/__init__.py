@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .breaker import CircuitBreakerSet, CircuitBreaker, CircuitOpenError
-from ._twisted import TwistedCircuitBreakerSet
+from .breaker import CircuitBreakerSet, CircuitBreaker, CircuitOpenError  # noqa
+from ._twisted import TwistedCircuitBreakerSet  # noqa

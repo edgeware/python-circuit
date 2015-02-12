@@ -153,6 +153,7 @@ class CircuitBreakerSet(object):
         """Return a circuit breaker for the given ID."""
         if id not in self.circuits:
             self.circuits[id] = self.factory(self.clock, self.log.getChild(id),
-                self.error_types, self.maxfail, self.reset_timeout,
-                self.time_unit)
+                                             self.error_types, self.maxfail,
+                                             self.reset_timeout,
+                                             self.time_unit)
         return self.circuits[id]

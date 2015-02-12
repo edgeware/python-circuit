@@ -40,7 +40,9 @@ class CircuitBreakerTestCase(unittest.TestCase):
         self.reset_timeout = 10
         self.time_unit = 60
         self.breaker = breaker.CircuitBreaker(self.clock.time, self.log,
-           [IOError], self.maxfail, self.reset_timeout, self.time_unit)
+                                              [IOError], self.maxfail,
+                                              self.reset_timeout,
+                                              self.time_unit)
 
     def test_passes_through_unhandled_errors(self):
         try:
