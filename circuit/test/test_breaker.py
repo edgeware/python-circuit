@@ -17,7 +17,7 @@
 from mockito import mock
 import unittest
 
-from circuit import breaker
+from circuit import breaker, CircuitOpenError
 
 
 class Clock(object):
@@ -97,3 +97,73 @@ class CircuitBreakerTestCase(unittest.TestCase):
                 raise IOError("error")
         self.assertRaises(IOError, test)
         self.assertEquals(len(self.breaker.errors), 1)
+
+    def test_exponential_backoff_timeout(self):
+        self.breaker = breaker.CircuitBreaker(self.clock.time, self.log,
+                                              [IOError], self.maxfail,
+                                              self.reset_timeout,
+                                              self.time_unit,
+                                              64, with_jitter=False)
+
+        # test that the failure after first reset_timeout * 1 bumps the failure counter
+        self.test_opens_breaker_on_errors()
+        self.clock.advance(self.reset_timeout)
+        self.assertEquals(self.breaker.test(), 'half-open')
+        self.breaker.error()
+        self.assertEquals(self.breaker.test_fail_count, 1)
+
+        # test that it does not recover before the 2 ** 1 * reset_timeout period
+        self.clock.advance(self.reset_timeout)
+        raised_e = None
+        try:
+            self.breaker.test()
+        except CircuitOpenError as e:
+            raised_e = e
+        self.assertIsNotNone(raised_e)
+        self.assertEquals(self.breaker.test_fail_count, 1)
+
+        # test that after the 2 ** 1 * reset_timeout the circuit half-opens
+        self.clock.advance(self.reset_timeout)
+        self.assertEquals(self.breaker.test(), 'half-open')
+
+        # then another error bumps up the fail counter again
+        self.breaker.error()
+        self.assertEquals(self.breaker.test_fail_count, 2)
+        self.clock.advance(self.reset_timeout)
+        self.breaker.error()
+        self.assertEquals(self.breaker.test_fail_count, 2)
+
+        self.clock.advance(self.reset_timeout * 4)
+        self.assertEquals(self.breaker.test(), 'half-open')
+        self.breaker.success()
+        self.assertEquals(self.breaker.test_fail_count, 0)
+
+    def test_backoff_with_jitter(self):
+        self.breaker = breaker.CircuitBreaker(self.clock.time, self.log,
+                                              [IOError], self.maxfail,
+                                              self.reset_timeout,
+                                              self.time_unit,
+                                              64, with_jitter=True)
+        self.test_opens_breaker_on_errors()
+        self.clock.advance(self.reset_timeout)
+        self.breaker.test()
+        self.breaker.error()
+        self.assertEquals(self.breaker.test_fail_count, 1)
+        self.clock.advance(self.reset_timeout * 2)
+        self.breaker.test()
+        self.breaker.error()
+        self.assertEquals(self.breaker.test_fail_count, 2)
+        # should have a reset_time of [0, 4 * reset_timeout] * random.random(), mean = 2 * reset_timeout.
+        # 99th percentile value of count of failures
+        failure_count = 0
+        self.clock.advance(self.reset_timeout * 2)
+        for _ in xrange(0, 1000):
+            try:
+                self.breaker.test()
+                self.breaker.open()
+                self.clock.advance(self.reset_timeout * 2)
+            except CircuitOpenError:
+                failure_count += 1
+
+        self.assertGreater(failure_count, 400)  # .999999999 chance of falling in this range
+        self.assertLess(failure_count, 600)
