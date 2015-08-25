@@ -17,20 +17,20 @@ service.
 
 The circuit breaker monitors the communication and in the case of a
 high error rate may break the circuit and not allow further
-communication for a short period.  After a while the breaker will let
+communication for a short period. After a while the breaker will let
 through a single request to probe to see if the service feels better.
 If not, it will open the circuit again.
 
-Note the optional parameters for back-off_cap and with_jitter.  If back-off on
+Note the optional parameters for back-off_cap and with_jitter. If back-off on
 retries is desired, set the back-off_cap to the maximum back-off value.
 Empirical data (http://www.awsarchitectureblog.com/2015/03/backoff.html)
 indicates adding jitter (randomness) to back-off strategies can lead to an
 increased throughput for a system experiencing contention for a shared
-resource.  If using a L{CircuitBreaker} with a contended resource it may be
+resource. If using a L{CircuitBreaker} with a contended resource it may be
 beneficial to use back-off with jitter.
 
 A L{CircuitBreakerSet} can handle the state for multiple interactions
-at the same time.  Use the C{context} method to pick which interaction
+at the same time. Use the C{context} method to pick which interaction
 to track:
 
     try:
