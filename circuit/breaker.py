@@ -21,6 +21,14 @@ communication for a short period.  After a while the breaker will let
 through a single request to probe to see if the service feels better.
 If not, it will open the circuit again.
 
+Note the optional parameters for back-off_cap and with_jitter.
+If back-off on retries is desired, set the back-off_cap to the maximum
+back-off value.  Empirical data (http://www.awsarchitectureblog.com/2015/03/backoff.html)
+indicates adding jitter (randomness) to back-off strategies can
+lead to an increased throughput for a system experiencing contention
+for a shared resource.  If using a L{CircuitBreaker} with a contended resource
+it may be beneficial to use back-off with jitter.
+
 A L{CircuitBreakerSet} can handle the state for multiple interactions
 at the same time.  Use the C{context} method to pick which interaction
 to track:
@@ -35,6 +43,7 @@ to track:
         pass
 
 """
+import random
 
 
 class CircuitOpenError(Exception):
@@ -44,8 +53,7 @@ class CircuitOpenError(Exception):
 class CircuitBreaker(object):
     """A single circuit with breaker logic."""
 
-    def __init__(self, clock, log, error_types, maxfail, reset_timeout,
-                 time_unit):
+    def __init__(self, clock, log, error_types, maxfail, reset_timeout, time_unit, backoff_cap=None, with_jitter=False):
         self.clock = clock
         self.log = log
         self.error_types = error_types
@@ -54,12 +62,16 @@ class CircuitBreaker(object):
         self.time_unit = time_unit
         self.state = 'closed'
         self.last_change = None
+        self.backoff_cap = backoff_cap
+        self.test_fail_count = 0
+        self.with_jitter = with_jitter
         self.errors = []
 
     def reset(self):
         """Reset the breaker after a successful transaction."""
         self.log.info('closing circuit')
         self.state = 'closed'
+        self.test_fail_count = 0
 
     def open(self, err=None):
         self.log.error('got error %r - opening circuit' % (err,))
@@ -68,6 +80,8 @@ class CircuitBreaker(object):
 
     def error(self, err=None):
         """Update the circuit breaker with an error event."""
+        if self.state == 'half-open':
+            self.test_fail_count = min(self.test_fail_count + 1, 16)
         self.errors.append(self.clock())
         if len(self.errors) > self.maxfail:
             time = self.clock() - self.errors.pop(0)
@@ -85,7 +99,10 @@ class CircuitBreaker(object):
         """
         if self.state == 'open':
             delta = self.clock() - self.last_change
-            if delta < self.reset_timeout:
+            delay_time = self.backoff_cap and min(self.reset_timeout * (2 ** self.test_fail_count), self.backoff_cap) or self.reset_timeout
+            if self.with_jitter:
+                delay_time = random.random() * delay_time  # add jitter, see http://www.awsarchitectureblog.com/2015/03/backoff.html
+            if delta < delay_time:
                 raise CircuitOpenError()
             self.state = 'half-open'
             self.log.debug('half-open - letting one through')
@@ -127,12 +144,14 @@ class CircuitBreakerSet(object):
     """
 
     def __init__(self, clock, log, maxfail=3, reset_timeout=10,
-                 time_unit=60, factory=CircuitBreaker):
+                 time_unit=60, backoff_cap=None, with_jitter=False, factory=CircuitBreaker):
         self.clock = clock
         self.log = log
         self.maxfail = maxfail
         self.reset_timeout = reset_timeout
         self.time_unit = time_unit
+        self.backoff_cap = backoff_cap
+        self.with_jitter = with_jitter
         self.circuits = {}
         self.error_types = []
         self.factory = factory
@@ -155,5 +174,7 @@ class CircuitBreakerSet(object):
             self.circuits[id] = self.factory(self.clock, self.log.getChild(id),
                                              self.error_types, self.maxfail,
                                              self.reset_timeout,
-                                             self.time_unit)
+                                             self.time_unit,
+                                             backoff_cap=self.backoff_cap,
+                                             with_jitter=self.with_jitter)
         return self.circuits[id]
