@@ -14,8 +14,12 @@
 
 """Test cases for the circuit breaker."""
 
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
 from mockito import mock
-import unittest
 
 from circuit import breaker, CircuitOpenError
 
@@ -105,14 +109,16 @@ class CircuitBreakerTestCase(unittest.TestCase):
                                               self.time_unit,
                                               64, with_jitter=False)
 
-        # test that the failure after first reset_timeout * 1 bumps the failure counter
+        # Test that the failure after first reset_timeout * 1 bumps the
+        # failure counter
         self.test_opens_breaker_on_errors()
         self.clock.advance(self.reset_timeout)
         self.assertEquals(self.breaker.test(), 'half-open')
         self.breaker.error()
         self.assertEquals(self.breaker.test_fail_count, 1)
 
-        # test that it does not recover before the 2 ** 1 * reset_timeout period
+        # Test that it does not recover before the 2 ** 1 * reset_timeout
+        # period
         self.clock.advance(self.reset_timeout)
         raised_e = None
         try:
@@ -153,7 +159,8 @@ class CircuitBreakerTestCase(unittest.TestCase):
         self.breaker.test()
         self.breaker.error()
         self.assertEquals(self.breaker.test_fail_count, 2)
-        # should have a reset_time of [0, 4 * reset_timeout] * random.random(), mean = 2 * reset_timeout.
+        # Should have a reset_time of:
+        # [0, 4 * reset_timeout] * random.random(), mean = 2 * reset_timeout.
         # 99th percentile value of count of failures
         failure_count = 0
         self.clock.advance(self.reset_timeout * 2)
@@ -165,5 +172,7 @@ class CircuitBreakerTestCase(unittest.TestCase):
             except CircuitOpenError:
                 failure_count += 1
 
-        self.assertGreater(failure_count, 400)  # .999999999 chance of falling in this range
+        # .999999999 chance of falling in this range
+        self.assertGreater(failure_count, 400)
+
         self.assertLess(failure_count, 600)
