@@ -7,7 +7,7 @@ with open('README.md') as f:
     long_description = f.read().strip()
 
 tests_require = [
-    'mockito==0.5.2',
+    'mockito==0.6.0',
     'Twisted>=10.2'
 ]
 

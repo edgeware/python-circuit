@@ -164,7 +164,7 @@ class CircuitBreakerTestCase(unittest.TestCase):
         # 99th percentile value of count of failures
         failure_count = 0
         self.clock.advance(self.reset_timeout * 2)
-        for _ in xrange(0, 1000):
+        for _ in range(1000):
             try:
                 self.breaker.test()
                 self.breaker.open()
