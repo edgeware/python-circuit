@@ -8,11 +8,13 @@ with open('README.md') as f:
 
 tests_require = [
     'mockito==0.6.0',
-    'Twisted>=10.2'
 ]
 
 if sys.version_info < (2, 7):
     tests_require.append('unittest2')
+    tests_require.append('Twisted>=10.2,<15.5')  # py2.6 support was dropped in 15.5
+else:
+    tests_require.append('Twisted>=10.2')
 
 setup(name='python-circuit',
       version='0.1.8',
