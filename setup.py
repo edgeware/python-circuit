@@ -17,7 +17,7 @@ else:
     tests_require.append('Twisted>=10.2')
 
 setup(name='python-circuit',
-      version='0.1.8',
+      version='0.1.9',
       description='Simple implementation of the Circuit Breaker pattern',
       long_description=long_description,
       author='Edgeware',
