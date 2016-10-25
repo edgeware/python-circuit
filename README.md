@@ -64,7 +64,7 @@ It is also possible to create a single instance of a circuit breaker.  The
 # Twisted Support #
 
 There's also support for using the circuit breaker with Twisted.  Note that
-the circuit breaker still use pythons standard logging framework. Example:
+the circuit breaker still use python's standard logging framework. Example:
 
 ```python
 import logger
